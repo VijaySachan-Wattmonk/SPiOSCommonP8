@@ -8,7 +8,7 @@
 import SwiftUICore
 
 extension View {
-    @ViewBuilder public func ex_If<Content: View>(_ condition: Bool, transform: (Self) -> Content) -> some View {
+    @ViewBuilder public func ext_If<Content: View>(_ condition: Bool, transform: (Self) -> Content) -> some View {
         if condition {
             transform(self)
         } else {
