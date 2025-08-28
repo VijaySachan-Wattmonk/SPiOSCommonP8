@@ -11,7 +11,7 @@ extension Collection {
     ///
     /// - Parameter index: The index of the element to retrieve.
     /// - Returns: The element at the given index if it exists, otherwise `nil`.
-    func ext_GetIfIndexExists(_ index: Index) -> Element? {
+    public func ext_GetIfIndexExists(_ index: Index) -> Element? {
         return indices.contains(index) ? self[index] : nil
     }
 }
@@ -24,7 +24,7 @@ extension MutableCollection where Self: RangeReplaceableCollection {
     ///   - element: The element to set.
     ///   - index: The index at which to set the element.
     /// - Returns: `true` if the element was set successfully, `false` if the index was out of bounds.
-    mutating func ext_SetIfIndexExists(_ element: Element, at index: Index) -> Bool {
+    mutating public func ext_SetIfIndexExists(_ element: Element, at index: Index) -> Bool {
         if indices.contains(index) {
             self[index] = element
             return true
