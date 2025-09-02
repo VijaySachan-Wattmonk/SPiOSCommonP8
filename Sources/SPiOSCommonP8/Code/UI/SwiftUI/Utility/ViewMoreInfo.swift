@@ -12,79 +12,93 @@ import SwiftUI
 ///   - Close button in the top-right of the panel.
 ///   - Scrollable text content passed as a `String`.
 ///   - Works on iPhone and iPad (sizes itself with safe margins).
-public struct ViewMoreInfo: View {
+private struct ViewMoreInfo: View {
+    @Environment(\.dismiss) private var dismiss
     let message: String
     let title: String
     let onClose: () -> Void
     
     // Tunables
     private let cornerRadius: CGFloat = 20
-    private let panelHMargin: CGFloat = 12      // horizontal safe margin
-    private let panelVMargin: CGFloat = 12      // vertical safe margin
+    private let panelHMargin: CGFloat = 20      // horizontal safe margin
+    private let panelVMargin: CGFloat = 20      // vertical safe margin
     
-    public var body: some View {
+     var body: some View {
         ZStack{
-            Color.red.ignoresSafeArea()
-//            Color.black.opacity(0.25)
-//                .ignoresSafeArea()
-            VStack(spacing: 0) {
-                // Header
-                HStack(alignment: .center) {
-                    Text(title)
-                        .font(.headline)
-                        .lineLimit(1)
-                        .truncationMode(.tail)
-                    Spacer()
-                    Button(action: onClose) {
-                        Image(systemName: "xmark.circle.fill")
-                            .font(.system(size: 25, weight: .semibold))
-                            .padding(25).foregroundStyle(Color.blue)
-//                            .background(.ultraThinMaterial, in: Circle())
+//            Color.red.ignoresSafeArea()
+                        Color.black.opacity(0.25)
+                            .ignoresSafeArea()
+            ZStack{
+                VStack(spacing: 0){
+                    // Header
+                    HStack(alignment: .center) {
+                        Text(title)
+                            .font(.title3)
+                            .multilineTextAlignment(.leading)
+                        Spacer()
+                        Button(action:{
+                            onClose()
+                            dismiss()
+                        }){
+                            Image(systemName: "xmark.circle.fill")
+                                .font(.system(size: 25, weight: .semibold))
+                                .padding(25).foregroundStyle(Color.blue)
+                            //                            .background(.ultraThinMaterial, in: Circle())
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityLabel("Close")
                     }
-                    .buttonStyle(.plain)
-                    .accessibilityLabel("Close")
-                }
-                .padding(16)
-                Divider()
-                // Scrollable text content
-                ScrollView{
-                    Text(message)
-                        .font(.body)
-                        .multilineTextAlignment(.leading)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(16)
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-            }.background(Color.white)
+                    .padding(16)
+                    Divider()
+                    // Scrollable text content
+                    ScrollView{
+                        Text(message)
+                            .font(.title2)
+                            .multilineTextAlignment(.leading)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(16)
+                    }
+                    
+                }.frame(maxWidth: .infinity, maxHeight: .infinity).padding()
+            }
+          .background(Color.white)
+//          .cornerRadius(cornerRadius)
+//                .padding(.horizontal, panelHMargin)
+//                .padding(.vertical, panelVMargin)
+                
             
-
+            
         }
-//            .cornerRadius(cornerRadius)
-            .padding(.horizontal, panelHMargin)
-            .padding(.vertical, panelVMargin)
+        
     }
 }
-//
-//
-//struct InfoFullScreenCover: View {
-//    @Environment(\.dismiss) private var dismiss
-//    let message: String
-//    let title: String
-//
-//    var body: some View {
-//        ZStack {
-//            // Dimmed backdrop that dismisses on tap
-//            Color.black.opacity(0.28)
-//                .ignoresSafeArea()
-//                .onTapGesture { dismiss() }
-//
-//            // The right-corner panel; its close button also dismisses
-//            ViewMoreInfo(message: message, title: title) {
-//                dismiss()
-//            }
-//        }
-//    }
-//}
+private struct ViewMoreInfoModifier: ViewModifier {
+    
+    @Binding var showInfo: Bool
+    var message: String
+    var title: String
+    
+    func body(content: Content) -> some View {
+        ZStack {
+            content
+//                .fullScreenCover(isPresented: $showInfo) {
+//                    ViewMoreInfo(message: message, title: title) {
+//                        
+//                    }
+//                }
+                .sheet(isPresented: $showInfo, onDismiss: {}){
+                    ViewMoreInfo(message: message, title: title) {
+                    
+                                        }
+                }
+        }
+    }
+}
+extension View {
+    public func modifier_ViewMoreInfo(showInfo: Binding<Bool>, message: String, title: String) -> some View {
+        modifier(ViewMoreInfoModifier(showInfo: showInfo, message: message, title: title))
+    }
+}
 
 // MARK: - Example usage
 public struct ViewMoreInfoDemo: View {
@@ -93,18 +107,13 @@ public struct ViewMoreInfoDemo: View {
         Array(repeating: "This is a reusable right-corner pop-up. Pass any long text to make it scrollable.", count: 20)
             .joined(separator: "\n\n")
     }()
-public init() {}
+    public init() {}
     public var body: some View {
         VStack(spacing: 16) {
             Button("Show Info") {
                 self.showInfo.toggle()
             }
-        }
-        .fullScreenCover(isPresented: $showInfo) {
-            ViewMoreInfo(message: sampleText, title: "What’s New") {
-               
-            }
-        }
+        }.modifier_ViewMoreInfo(showInfo:$showInfo, message: sampleText, title:"What’s New")
     }
 }
 #Preview{
