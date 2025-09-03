@@ -22,11 +22,11 @@ public struct ViewInfoIconButton: View{
             showInfo=true
         }, label:{
             Image(systemName: "info.circle")
-//                .resizable()
-//                .foregroundColor(.blue)
-//                .frame(width: iconSize, height: iconSize)
-//                .scaledToFit()
-//                .padding(25)/*.background(Color.red)*/
+                .resizable()
+                .foregroundColor(.blue)
+                .frame(width: iconSize, height: iconSize)
+                .scaledToFit()
+                .padding(10)/*.background(Color.red)*/
         }).modifier_ViewMoreInfo(showInfo:$showInfo, message: message, title:title,onClose:onClose)
     }
 }
