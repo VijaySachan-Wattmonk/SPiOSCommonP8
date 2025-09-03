@@ -12,16 +12,21 @@ public struct ViewInfoIconButton: View{
     let message: String
     let onClose: () -> Void
     let iconSize=25.0
+    public init(title: String, message: String, onClose: @escaping () -> Void) {
+        self.title = title
+        self.message = message
+        self.onClose = onClose
+    }
     public var body: some View{
         Button(action:{
             showInfo=true
         }, label:{
             Image(systemName: "info.circle")
-                .resizable()
-                .foregroundColor(.blue)
-                .frame(width: iconSize, height: iconSize)
-                .scaledToFit()
-                .padding(25)/*.background(Color.red)*/
+//                .resizable()
+//                .foregroundColor(.blue)
+//                .frame(width: iconSize, height: iconSize)
+//                .scaledToFit()
+//                .padding(25)/*.background(Color.red)*/
         }).modifier_ViewMoreInfo(showInfo:$showInfo, message: message, title:title,onClose:onClose)
     }
 }
