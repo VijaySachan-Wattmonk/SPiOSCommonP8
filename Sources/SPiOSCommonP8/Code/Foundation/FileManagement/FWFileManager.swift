@@ -231,7 +231,7 @@ public final class FWFileManager:Sendable,FWLoggerDelegate{
      - Returns: `true` if the folder is missing or has no non-hidden items; otherwise `false`.
      */
     public func isDirectoryEmpty(inFolder: String? = nil,
-                                 directory: FileManager.SearchPathDirectory) async -> Result<Bool, FWFileManagerError> {
+                                 directory: FileManager.SearchPathDirectory) async -> Bool {
         let fm = FileManager.default
         let baseURL = fm.urls(for: directory, in: .userDomainMask)[0]
         let targetURL: URL = {
@@ -244,19 +244,21 @@ public final class FWFileManager:Sendable,FWLoggerDelegate{
 
         var isDir: ObjCBool = false
         guard fm.fileExists(atPath: targetURL.path, isDirectory: &isDir), isDir.boolValue else {
-            // Folder does not exist or is not a directory → return failure
+            // Folder does not exist or is not a directory → log and return true
             mLog(msg: "\(Msg.dirNotDirectory): \(targetURL.path)")
-            return .failure(.writeFailed("\(Msg.dirNotDirectory): \(targetURL.path)"))
+            return true
         }
 
         do {
             let contents = try fm.contentsOfDirectory(at: targetURL,
                                                       includingPropertiesForKeys: nil,
                                                       options: [.skipsHiddenFiles])
-            return .success(contents.isEmpty)
+            let isEmpty = contents.isEmpty
+            mLog(msg: "Directory check at \(targetURL.path) → \(isEmpty ? "Empty" : "Not Empty")")
+            return isEmpty
         } catch {
             mLog(msg: "\(Msg.readDirFailed): \(error.localizedDescription)")
-            return .failure(.writeFailed("\(Msg.readDirFailed): \(error.localizedDescription)"))
+            return true
         }
     }
     
