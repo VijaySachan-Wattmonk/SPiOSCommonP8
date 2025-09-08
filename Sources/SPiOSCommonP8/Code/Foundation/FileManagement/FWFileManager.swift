@@ -33,6 +33,19 @@ public final class FWFileManager:Sendable,FWLoggerDelegate{
         /// Writing the file to disk failed.
         case writeFailed(String)
     }
+    
+    // MARK: - Messages
+    private enum Msg {
+        static let unsupportedExt   = "Unsupported file extension"
+        static let encodeFailed     = "Failed to encode image for"
+        static let dirNotDirectory  = "Directory not found or not a directory"
+        static let readDirFailed    = "Failed to read directory"
+        static let fileMissing      = "File does not exist at path"
+        static let loadImageFailed  = "Failed to load image from file"
+        static let savedImageOk     = "Successfully saved image"
+        static let savedImageFail   = "Failed to save image"
+        static let fetchedImageOk   = "Successfully fetched image for file name"
+    }
 
     // MARK: - Save Image (Async)
     /**
@@ -41,7 +54,7 @@ public final class FWFileManager:Sendable,FWLoggerDelegate{
      The image format is inferred from `fileExtension`:
      - `.png` → Encoded using `pngData()`
      - `.jpg` / `.jpeg` → Encoded using `jpegData(compressionQuality:)`
-     - Any other extension → `.failure(.imageEncodingFailed)`
+     - Any other extension → `.failure(.imageEncodingFailed)
 
      The destination directory is configurable (Documents/Caches/etc.), and you can optionally provide a subfolder. If the subfolder does not exist, it will be created automatically.
 
@@ -98,12 +111,12 @@ public final class FWFileManager:Sendable,FWLoggerDelegate{
             } else if ext == "jpg" || ext == "jpeg" {
                 data = image.jpegData(compressionQuality: compressionQuality)
             } else {
-                let msg="Unsupported file extension '\(fileExtension)'."
+                let msg = "\(Msg.unsupportedExt) '\(fileExtension)'."
                 self.mLog(msg: msg)
                 return .failure(.imageEncodingFailed(msg))
             }
             guard let data else {
-                let msg="Failed to encode image for '\(name).\(ext)'."
+                let msg = "\(Msg.encodeFailed) '\(name).\(ext)'."
                 return .failure(.imageEncodingFailed(msg))
             }
             let finalName = name + "." + ext
@@ -123,10 +136,10 @@ public final class FWFileManager:Sendable,FWLoggerDelegate{
             let fileURL = dirURL.appendingPathComponent(finalName)
             do {
                 try data.write(to: fileURL, options: .atomic)
-                self.mLog(msg: "Successfully saved image \(finalName)")
+                self.mLog(msg: "\(Msg.savedImageOk) \(finalName)")
                 return .success(fileURL)
             } catch {
-                self.mLog(msg: "Failed to save image \(error.localizedDescription)")
+                self.mLog(msg: "\(Msg.savedImageFail) \(error.localizedDescription)")
                 return .failure(.writeFailed(error.localizedDescription))
             }
         }.value
@@ -182,7 +195,7 @@ public final class FWFileManager:Sendable,FWLoggerDelegate{
         return await Task.detached(priority: .userInitiated) { () -> Result<UIImage, FWFileManagerError> in
             let ext = fileExtension.lowercased()
             guard ext == "png" || ext == "jpg" || ext == "jpeg" else {
-                let msg = "Unsupported file extension '\(fileExtension)'."
+                let msg = "\(Msg.unsupportedExt) '\(fileExtension)'."
                 self.mLog(msg: msg)
                 return .failure(.imageEncodingFailed(msg))
             }
@@ -192,19 +205,60 @@ public final class FWFileManager:Sendable,FWLoggerDelegate{
             }
             let fileURL = dirURL.appendingPathComponent(name + "." + ext)
             guard FileManager.default.fileExists(atPath: fileURL.path) else {
-                let msg = "File does not exist at path: \(fileURL.path)"
+                let msg = "\(Msg.fileMissing): \(fileURL.path)"
                 self.mLog(msg: msg)
                 return .failure(.writeFailed(msg))
             }
             guard let data = try? Data(contentsOf: fileURL),
                   let image = UIImage(data: data) else {
-                let msg = "Failed to load image from file: \(fileURL.path)"
+                let msg = "\(Msg.loadImageFailed): \(fileURL.path)"
                 self.mLog(msg: msg)
                 return .failure(.writeFailed(msg))
             }
-            self.mLog(msg: "Successfully fetched image for file name: \(name).\(fileExtension)")
+            self.mLog(msg: "\(Msg.fetchedImageOk): \(name).\(fileExtension)")
             return .success(image)
         }.value
     }
+    
+    // MARK: - Directory Utilities
+    /**
+     Checks whether a target folder inside the given sandbox `directory` is empty.
+
+     - Parameters:
+       - inFolder: Optional subfolder name under `directory` (e.g., `"Images"`). If `nil` or empty, the check is performed directly on the base `directory`.
+       - directory: The base sandbox directory (Documents/Caches/etc.). Defaults to `.documentDirectory`.
+
+     - Returns: `true` if the folder is missing or has no non-hidden items; otherwise `false`.
+     */
+    public func isDirectoryEmpty(inFolder: String? = nil,
+                                 directory: FileManager.SearchPathDirectory) async -> Result<Bool, FWFileManagerError> {
+        let fm = FileManager.default
+        let baseURL = fm.urls(for: directory, in: .userDomainMask)[0]
+        let targetURL: URL = {
+            if let folder = inFolder, !folder.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                return baseURL.appendingPathComponent(folder, isDirectory: true)
+            } else {
+                return baseURL
+            }
+        }()
+
+        var isDir: ObjCBool = false
+        guard fm.fileExists(atPath: targetURL.path, isDirectory: &isDir), isDir.boolValue else {
+            // Folder does not exist or is not a directory → return failure
+            mLog(msg: "\(Msg.dirNotDirectory): \(targetURL.path)")
+            return .failure(.writeFailed("\(Msg.dirNotDirectory): \(targetURL.path)"))
+        }
+
+        do {
+            let contents = try fm.contentsOfDirectory(at: targetURL,
+                                                      includingPropertiesForKeys: nil,
+                                                      options: [.skipsHiddenFiles])
+            return .success(contents.isEmpty)
+        } catch {
+            mLog(msg: "\(Msg.readDirFailed): \(error.localizedDescription)")
+            return .failure(.writeFailed("\(Msg.readDirFailed): \(error.localizedDescription)"))
+        }
+    }
+    
     
 }
