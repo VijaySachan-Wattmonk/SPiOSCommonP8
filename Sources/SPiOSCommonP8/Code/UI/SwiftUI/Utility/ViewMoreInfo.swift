@@ -40,10 +40,10 @@ public struct ViewMoreInfo: View {
     private let panelHMargin: CGFloat = 20      // horizontal safe margin
     private let panelVMargin: CGFloat = 20      // vertical safe margin
     
-     public var body: some View {
+    public var body: some View {
         ZStack{
-                        Color.black.opacity(0.25)
-                            .ignoresSafeArea()
+            Color.black.opacity(0.25)
+                .ignoresSafeArea()
             ZStack{
                 VStack(spacing: 0){
                     // Header
@@ -75,11 +75,11 @@ public struct ViewMoreInfo: View {
                     
                 }.frame(maxWidth: .infinity, maxHeight: .infinity).padding()
             }
-          .background(Color.white)
-//          .cornerRadius(cornerRadius)
-//                .padding(.horizontal, panelHMargin)
-//                .padding(.vertical, panelVMargin)
-                
+            .background(Color.white)
+            //          .cornerRadius(cornerRadius)
+            //                .padding(.horizontal, panelHMargin)
+            //                .padding(.vertical, panelVMargin)
+            
             
             
         }
@@ -95,11 +95,11 @@ private struct ViewMoreInfoModifier: ViewModifier {
     func body(content: Content) -> some View {
         ZStack {
             content
-//                .fullScreenCover(isPresented: $showInfo) {
-//                    ViewMoreInfo(message: message, title: title) {
-//                        
-//                    }
-//                }
+            //                .fullScreenCover(isPresented: $showInfo) {
+            //                    ViewMoreInfo(message: message, title: title) {
+            //
+            //                    }
+            //                }
                 .sheet(isPresented: $showInfo, onDismiss: {
                     onClose()
                 }){
@@ -109,12 +109,12 @@ private struct ViewMoreInfoModifier: ViewModifier {
     }
 }
 extension View{
-     func modifier_ViewMoreInfo(showInfo: Binding<Bool>, message: String, title: String,onClose: @escaping () -> Void) -> some View{
+    func modifier_ViewMoreInfo(showInfo: Binding<Bool>, message: String, title: String,onClose: @escaping () -> Void) -> some View{
         modifier(ViewMoreInfoModifier(onClose: onClose, showInfo: showInfo, message: message, title: title))
     }
 }
 // MARK: - Example usage
-public struct ViewMoreInfoDemo: View {
+public struct ViewMoreInfoDemo: View{
     private let sampleText = {
         Array(repeating: "This is a reusable right-corner pop-up. Pass any long text to make it scrollable.", count: 20)
             .joined(separator: "\n\n")
