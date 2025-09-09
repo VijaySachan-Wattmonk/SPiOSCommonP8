@@ -262,5 +262,28 @@ public final class FWFileManager:Sendable,FWLoggerDelegate{
         }
     }
     
+    public func deleteDirectory(inFolder: String? = nil,
+                                directory: FileManager.SearchPathDirectory) async -> Result<Void, FWFileManagerError> {
+        return await Task.detached(priority: .userInitiated) { () -> Result<Void, FWFileManagerError> in
+            let fm = FileManager.default
+            let baseURL = fm.urls(for: directory, in: .userDomainMask)[0]
+            let targetURL: URL = {
+                if let folder = inFolder, !folder.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                    return baseURL.appendingPathComponent(folder, isDirectory: true)
+                } else {
+                    return baseURL
+                }
+            }()
+            do {
+                try fm.removeItem(at: targetURL)
+                self.mLog(msg: "Deleted directory: \(targetURL.path)")
+                return .success(())
+            } catch {
+                self.mLog(msg: "Failed to delete directory: \(error.localizedDescription)")
+                return .failure(.writeFailed("Failed to delete directory: \(error.localizedDescription)"))
+            }
+        }.value
+    }
+    
     
 }
