@@ -7,7 +7,7 @@
 import Foundation
 @MainActor
 public final class FWPopupManager: ObservableObject {
-    static let shared = FWPopupManager()
+    public static let shared = FWPopupManager()
     @Published var isPresented: Bool = false
     @Published var title: String = ""
     @Published var description: String = ""
@@ -28,19 +28,19 @@ public final class FWPopupManager: ObservableObject {
     }
 
     // Convenience presenters: 1, 2, 3 buttons
-    func showOne(title: String, description: String, allowOutsideTapToDismiss: Bool = false, _ first: PopupButton) {
+    public func showOne(title: String, description: String, allowOutsideTapToDismiss: Bool = false, _ first: PopupButton) {
         show(title: title, description: description, allowOutsideTapToDismiss: allowOutsideTapToDismiss, buttons: [first])
     }
 
-    func showTwo(title: String, description: String, allowOutsideTapToDismiss: Bool = false, _ first: PopupButton, _ second: PopupButton) {
+    public func showTwo(title: String, description: String, allowOutsideTapToDismiss: Bool = false, _ first: PopupButton, _ second: PopupButton) {
         show(title: title, description: description, allowOutsideTapToDismiss: allowOutsideTapToDismiss, buttons: [first, second])
     }
 
-    func showThree(title: String, description: String, allowOutsideTapToDismiss: Bool = false, _ first: PopupButton, _ second: PopupButton, _ third: PopupButton) {
+    public func showThree(title: String, description: String, allowOutsideTapToDismiss: Bool = false, _ first: PopupButton, _ second: PopupButton, _ third: PopupButton) {
         show(title: title, description: description, allowOutsideTapToDismiss: allowOutsideTapToDismiss, buttons: [first, second, third])
     }
 
-    func hide() {
+    public func hide() {
         DispatchQueue.main.async {
             self.isPresented = false
         }

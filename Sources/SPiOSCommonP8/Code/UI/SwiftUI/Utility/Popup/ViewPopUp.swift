@@ -7,13 +7,13 @@
 
 import SwiftUI
 
-struct PopupButton: Identifiable {
-    let id = UUID()
+public struct PopupButton: Identifiable {
+    public let id = UUID()
     let title: String
     let role: ButtonRole?
     let action: (() -> Void)?
     
-    init(_ title: String, role: ButtonRole? = nil, action: (() -> Void)? = nil) {
+    public init(_ title: String, role: ButtonRole? = nil, action: (() -> Void)? = nil) {
         self.title = title
         self.role = role
         self.action = action
