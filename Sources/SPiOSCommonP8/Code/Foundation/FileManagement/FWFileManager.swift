@@ -286,6 +286,4 @@ public final class FWFileManager:Sendable,FWLoggerDelegate{
             }
         }.value
     }
-    
-    
 }
