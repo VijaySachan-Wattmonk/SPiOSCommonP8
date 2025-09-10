@@ -263,8 +263,8 @@ public final class FWFileManager:Sendable,FWLoggerDelegate{
     }
     
     public func deleteDirectory(inFolder: String? = nil,
-                                directory: FileManager.SearchPathDirectory) async -> Result<Void, FWFileManagerError> {
-        return await Task.detached(priority: .userInitiated) { () -> Result<Void, FWFileManagerError> in
+                                directory: FileManager.SearchPathDirectory) async -> Result<Int, FWFileManagerError> {
+        return await Task.detached(priority: .userInitiated) { () -> Result<Int, FWFileManagerError> in
             let fm = FileManager.default
             let baseURL = fm.urls(for: directory, in: .userDomainMask)[0]
             let targetURL: URL = {
@@ -275,9 +275,11 @@ public final class FWFileManager:Sendable,FWLoggerDelegate{
                 }
             }()
             do {
+                let contents = try fm.contentsOfDirectory(at: targetURL, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles])
+                let fileCount = contents.count
                 try fm.removeItem(at: targetURL)
-                self.mLog(msg: "Deleted directory: \(targetURL.path)")
-                return .success(())
+                self.mLog(msg: "Deleted directory: \(targetURL.path) with \(fileCount) files")
+                return .success(fileCount)
             } catch {
                 self.mLog(msg: "Failed to delete directory: \(error.localizedDescription)")
                 return .failure(.writeFailed("Failed to delete directory: \(error.localizedDescription)"))
