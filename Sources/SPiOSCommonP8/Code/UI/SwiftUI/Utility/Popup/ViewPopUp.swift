@@ -11,12 +11,11 @@ import UIKit
 
 // MARK: - Popup Button Model
 
-public struct PopupButton: Identifiable {
+public struct PopupButton: Identifiable{
     public let id = UUID()
     let title: String
     let role: ButtonRole?
     let action: (() -> Void)?
-
     public init(_ title: String, role: ButtonRole? = nil, action: (() -> Void)? = nil) {
         self.title = title
         self.role = role
