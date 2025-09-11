@@ -4,13 +4,10 @@
 //
 //  Created by You on 09/09/2025.
 //
-
 import Foundation
 import SwiftUI
 import UIKit
-
 // MARK: - Popup Button Model
-
 public struct PopupButton: Identifiable{
     public let id = UUID()
     let title: String
@@ -22,31 +19,30 @@ public struct PopupButton: Identifiable{
         self.action = action
     }
 }
-
 // MARK: - Overlay Window Manager (ALWAYS ON TOP)
 
 /// Owns a topmost UIWindow that hosts SwiftUI content above sheets/fullScreenCover.
 @MainActor
 final class OverlayWindowManager {
     static let shared = OverlayWindowManager()
-
+    
     private var window: UIWindow?
     private var host: UIHostingController<AnyView>?
     private var isVisible = false
-
+    
     private init() {}
-
+    
     func show<Content: View>(
         ignoresSafeArea: Bool = true,
         animated: Bool = true,
         @ViewBuilder content: () -> Content
     ) {
         guard let scene = Self.activeForegroundWindowScene() else { return }
-
+        
         let window = UIWindow(windowScene: scene)
         window.windowLevel = .alert + 1          // 👈 Above everything
         window.backgroundColor = .clear
-
+        
         let root = AnyView(
             Group {
                 if ignoresSafeArea {
@@ -56,31 +52,31 @@ final class OverlayWindowManager {
                 }
             }
         )
-
+        
         let host = UIHostingController(rootView: root)
         host.view.backgroundColor = .clear
-
+        
         window.rootViewController = host
         window.isHidden = false
         window.isOpaque = false
         window.alpha = 0
-
+        
         self.window = window
         self.host = host
         self.isVisible = true
-
+        
         if animated {
             UIView.animate(withDuration: 0.2) { window.alpha = 1 }
         } else {
             window.alpha = 1
         }
     }
-
+    
     func update<Content: View>(@ViewBuilder content: () -> Content) {
         guard isVisible, let host = host else { return }
         host.rootView = AnyView(content())
     }
-
+    
     func hide(animated: Bool = true) {
         guard let window = window else { return }
         let dispose = { [weak self] in
@@ -97,7 +93,7 @@ final class OverlayWindowManager {
             dispose()
         }
     }
-
+    
     private static func activeForegroundWindowScene() -> UIWindowScene? {
         UIApplication.shared.connectedScenes
             .compactMap { $0 as? UIWindowScene }
@@ -105,31 +101,31 @@ final class OverlayWindowManager {
     }
 }
 // MARK: - SwiftUI Popup Content (matches your old ViewPopUp styling)
- struct GlobalPopupOverlayView: View {
-     @ObservedObject var manager: FWPopupManager
-     @State private var animateIn: Bool = true   // for internal scale/opacity
-     private let padding=20.0
-     private let safeAreaInsets = UIApplication.ext_MainSafeAreaInsets
+struct GlobalPopupOverlayView: View {
+    @ObservedObject var manager: FWPopupManager
+    @State private var animateIn: Bool = true   // for internal scale/opacity
+    private let padding=20.0
+    private let safeAreaInsets = UIApplication.ext_MainSafeAreaInsets
     var body: some View{
         GeometryReader { geo in
-        ZStack {
-            // Dim background (tap to dismiss if allowed)
-            Color.black.opacity(0.4).ignoresSafeArea()
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    if manager.allowOutsideTapToDismiss {
-                        manager.hide()
+            ZStack {
+                // Dim background (tap to dismiss if allowed)
+                Color.black.opacity(0.4).ignoresSafeArea()
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        if manager.allowOutsideTapToDismiss {
+                            manager.hide()
+                        }
                     }
-                }
-            
+                
                 // Card
                 VStack(alignment: .center, spacing: 16) {
                     // Title
                     Text(manager.title)
                         .font(.headline)
                         .multilineTextAlignment(.center)
-//                        .frame(maxWidth: .infinity, alignment: .center)
-                    // Description
+                        .frame(maxWidth: .infinity, alignment: .center)
+                    //Description
                     ScrollView {
                         Text(manager.description)
                             .font(.subheadline)
@@ -137,6 +133,8 @@ final class OverlayWindowManager {
                             .multilineTextAlignment(.leading)
                         
                     }
+                    
+                    // or dynamic based on screen size
                     // Buttons (up to 3) — same layout rules as your original
                     if !manager.buttons.isEmpty {
                         let clipped = Array(manager.buttons.prefix(3))
@@ -161,7 +159,7 @@ final class OverlayWindowManager {
                                         }
                                     }
                                 }
-                            } else {
+                            }else{
                                 ForEach(Array(clipped.enumerated()), id: \.element.id) { index, btn in
                                     Button(role: btn.role) {
                                         btn.action?()
@@ -181,7 +179,7 @@ final class OverlayWindowManager {
                     }
                 }
                 .padding(padding)
-//                .fixedSize(horizontal: false, vertical:true)
+                //                .fixedSize(horizontal: false, vertical:true)
                 .background(
                     RoundedRectangle(cornerRadius: 14, style: .continuous)
                         .fill(Color(.systemBackground))
@@ -190,15 +188,18 @@ final class OverlayWindowManager {
                 .scaleEffect(animateIn ? 1.0 : 0.9)              // mimic .transition(.scale)
                 .opacity(animateIn ? 1.0 : 0.0)                  // mimic .transition(.opacity)
                 .onAppear {
-                    withAnimation(.easeInOut(duration: 0.2)) { 
+                    withAnimation(.easeInOut(duration: 0.2)) {
                         animateIn = true
                     }
                     print("onAppear width=\(geo.size.width), height=\(geo.size.height) leading=\(safeAreaInsets.left), trailing=\(safeAreaInsets.right), top=\(safeAreaInsets.top), bottom=\(safeAreaInsets.bottom)")
                     let screenWidth  = UIScreen.main.bounds.width
                     let screenHeight = UIScreen.main.bounds.height
                     print("screenWidth: \(screenWidth), screenHeight: \(screenHeight)")
-                }.frame(maxWidth:geo.size.width-safeAreaInsets.left-safeAreaInsets.right-padding*2,maxHeight: geo.size.height-safeAreaInsets.top-safeAreaInsets.bottom-padding*2)
-                .fixedSize(horizontal: false, vertical: true)
+                }
+                .frame(maxWidth:geo.size.width-safeAreaInsets.left-safeAreaInsets.right-padding*2,maxHeight: geo.size.height-safeAreaInsets.top-safeAreaInsets.bottom-padding*2)
+                .fixedSize(horizontal:false,vertical: true)
+                
+                //                .fixedSize(horizontal: true, vertical: true)
             }
         }
         .animation(.easeInOut(duration: 0.2), value: manager.isPresented)
@@ -208,41 +209,41 @@ final class OverlayWindowManager {
 
 /*
  USAGE:
-
+ 
  // 1) Show a single-button popup
  FWPopupManager.shared.showOne(
-     title: "Heads up",
-     description: "This is a global overlay popup.",
-     PopupButton("OK", role: .cancel) {
-         print("OK tapped")
-     }
+ title: "Heads up",
+ description: "This is a global overlay popup.",
+ PopupButton("OK", role: .cancel) {
+ print("OK tapped")
+ }
  )
-
+ 
  // 2) Show two buttons
  FWPopupManager.shared.showTwo(
-     title: "Replace file?",
-     description: "A file with the same name exists.",
-     allowOutsideTapToDismiss: false,
-     PopupButton("Cancel", role: .cancel) {
-         FWPopupManager.shared.hide()
-     },
-     PopupButton("Replace", role: .destructive) {
-         // your action…
-         FWPopupManager.shared.hide()
-     }
+ title: "Replace file?",
+ description: "A file with the same name exists.",
+ allowOutsideTapToDismiss: false,
+ PopupButton("Cancel", role: .cancel) {
+ FWPopupManager.shared.hide()
+ },
+ PopupButton("Replace", role: .destructive) {
+ // your action…
+ FWPopupManager.shared.hide()
+ }
  )
-
+ 
  // 3) Update while visible (optional)
  FWPopupManager.shared.update(description: "Please wait…")
-
+ 
  // 4) Hide
  FWPopupManager.shared.hide()
-
+ 
  NOTES:
  - No need to attach any view modifier at your root.
  - The overlay is presented in a dedicated UIWindow at `.alert + 1` level,
-   so it appears above sheets and fullScreenCover.
-*/
+ so it appears above sheets and fullScreenCover.
+ */
 import SwiftUI
 
 public struct GlobalPopupDemoView: View {
@@ -274,7 +275,7 @@ public struct GlobalPopupDemoView: View {
                             }
                         )
                     }
-
+                    
                     Button("Show 3-button popup") {
                         FWPopupManager.shared.showThree(
                             title: "Choose option",
@@ -285,7 +286,7 @@ public struct GlobalPopupDemoView: View {
                         )
                     }
                 }
-
+                
                 Section("Update while visible") {
                     Button("Show ‘Working…’ then update to ‘Done’") {
                         FWPopupManager.shared.showOne(
@@ -295,7 +296,7 @@ public struct GlobalPopupDemoView: View {
                                 FWPopupManager.shared.hide()
                             }
                         )
-
+                        
                         // Simulate async work and update the same popup
                         Task { @MainActor in
                             try? await Task.sleep(nanoseconds: 1_000_000_000) // 1s
@@ -316,7 +317,7 @@ public struct GlobalPopupDemoView: View {
                         }
                     }
                 }
-
+                
                 Section("Dismiss") {
                     Button("Hide popup") {
                         FWPopupManager.shared.hide()
