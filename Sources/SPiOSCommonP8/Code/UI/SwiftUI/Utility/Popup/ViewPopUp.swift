@@ -110,7 +110,8 @@ final class OverlayWindowManager {
      @ObservedObject var manager: FWPopupManager
      @State private var animateIn: Bool = true   // for internal scale/opacity
      private let padding=20.0
-    var body: some View {
+     private let safeAreaInsets = UIApplication.ext_MainSafeAreaInsets
+    var body: some View{
         GeometryReader { geo in
         ZStack {
             // Dim background (tap to dismiss if allowed)
@@ -134,7 +135,7 @@ final class OverlayWindowManager {
                         Text(manager.description)
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
-                            .multilineTextAlignment(.center)
+                            .multilineTextAlignment(.leading)
                         
                     }
                     // Buttons (up to 3) — same layout rules as your original
@@ -187,14 +188,17 @@ final class OverlayWindowManager {
                         .fill(Color(.systemBackground))
                 )
                 .shadow(radius: 20)
-                .padding(.horizontal, 24)
                 .scaleEffect(animateIn ? 1.0 : 0.9)              // mimic .transition(.scale)
                 .opacity(animateIn ? 1.0 : 0.0)                  // mimic .transition(.opacity)
                 .onAppear {
                     withAnimation(.easeInOut(duration: 0.2)) { 
                         animateIn = true
                     }
-                }.frame(maxHeight: geo.size.height*0.75)
+                    print("onAppear width=\(geo.size.width), height=\(geo.size.height) leading=\(safeAreaInsets.left), trailing=\(safeAreaInsets.right), top=\(safeAreaInsets.top), bottom=\(safeAreaInsets.bottom)")
+                    let screenWidth  = UIScreen.main.bounds.width
+                    let screenHeight = UIScreen.main.bounds.height
+                    print("screenWidth: \(screenWidth), screenHeight: \(screenHeight)")
+                }.frame(maxWidth:geo.size.width-safeAreaInsets.left-safeAreaInsets.right-padding*2,maxHeight: geo.size.height-safeAreaInsets.top-safeAreaInsets.bottom-padding*2)
                 .fixedSize(horizontal: false, vertical: true)
             }
         }
@@ -242,9 +246,9 @@ final class OverlayWindowManager {
 */
 import SwiftUI
 
-struct GlobalPopupDemoView: View {
-   
-    var body: some View {
+public struct GlobalPopupDemoView: View {
+    public init(){}
+    public var body: some View {
         NavigationView {
             List {
                 Section("Quick demos") {
