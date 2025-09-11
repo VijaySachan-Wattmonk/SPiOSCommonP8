@@ -105,47 +105,63 @@ final class OverlayWindowManager {
             .first { $0.activationState == .foregroundActive }
     }
 }
-
 // MARK: - SwiftUI Popup Content (matches your old ViewPopUp styling)
-
  struct GlobalPopupOverlayView: View {
-    @ObservedObject var manager: FWPopupManager
-
-    @State private var animateIn: Bool = true   // for internal scale/opacity
-
+     @ObservedObject var manager: FWPopupManager
+     @State private var animateIn: Bool = true   // for internal scale/opacity
+     private let padding=20.0
     var body: some View {
+        GeometryReader { geo in
         ZStack {
             // Dim background (tap to dismiss if allowed)
-            Color.black.opacity(0.4)
+            Color.black.opacity(0.4).ignoresSafeArea()
                 .contentShape(Rectangle())
                 .onTapGesture {
                     if manager.allowOutsideTapToDismiss {
                         manager.hide()
                     }
                 }
-
-            // Card
-            VStack(alignment: .center, spacing: 16) {
-                // Title
-                Text(manager.title)
-                    .font(.headline)
-                    .multilineTextAlignment(.center)
-                    .frame(maxWidth: .infinity, alignment: .center)
-
-                // Description
-                Text(manager.description)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                    .multilineTextAlignment(.center)
-                    .fixedSize(horizontal: false, vertical: true)
-
-                // Buttons (up to 3) — same layout rules as your original
-                if !manager.buttons.isEmpty {
-                    let clipped = Array(manager.buttons.prefix(3))
-                    VStack(spacing: 0) {
-                        Divider()
-                        if clipped.count == 2 {
-                            HStack(spacing: 0) {
+            
+                // Card
+                VStack(alignment: .center, spacing: 16) {
+                    // Title
+                    Text(manager.title)
+                        .font(.headline)
+                        .multilineTextAlignment(.center)
+//                        .frame(maxWidth: .infinity, alignment: .center)
+                    // Description
+                    ScrollView {
+                        Text(manager.description)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.center)
+                        
+                    }
+                    // Buttons (up to 3) — same layout rules as your original
+                    if !manager.buttons.isEmpty {
+                        let clipped = Array(manager.buttons.prefix(3))
+                        VStack(spacing: 0) {
+                            Divider()
+                            if clipped.count == 2 {
+                                HStack(spacing: 0) {
+                                    ForEach(Array(clipped.enumerated()), id: \.element.id) { index, btn in
+                                        Button(role: btn.role) {
+                                            btn.action?()
+                                            manager.hide()
+                                        } label: {
+                                            Text(btn.title)
+                                                .fontWeight(btn.role == .cancel ? .regular : .semibold)
+                                                .frame(maxWidth: .infinity, minHeight: 44)
+                                        }
+                                        .buttonStyle(.plain)
+                                        .foregroundStyle(btn.role == .destructive ? .red : .accentColor)
+                                        
+                                        if index == 0 {
+                                            Divider().frame(height: 44)
+                                        }
+                                    }
+                                }
+                            } else {
                                 ForEach(Array(clipped.enumerated()), id: \.element.id) { index, btn in
                                     Button(role: btn.role) {
                                         btn.action?()
@@ -157,45 +173,29 @@ final class OverlayWindowManager {
                                     }
                                     .buttonStyle(.plain)
                                     .foregroundStyle(btn.role == .destructive ? .red : .accentColor)
-
-                                    if index == 0 {
-                                        Divider().frame(height: 44)
-                                    }
+                                    
+                                    if index < clipped.count - 1 { Divider() }
                                 }
-                            }
-                        } else {
-                            ForEach(Array(clipped.enumerated()), id: \.element.id) { index, btn in
-                                Button(role: btn.role) {
-                                    btn.action?()
-                                    manager.hide()
-                                } label: {
-                                    Text(btn.title)
-                                        .fontWeight(btn.role == .cancel ? .regular : .semibold)
-                                        .frame(maxWidth: .infinity, minHeight: 44)
-                                }
-                                .buttonStyle(.plain)
-                                .foregroundStyle(btn.role == .destructive ? .red : .accentColor)
-
-                                if index < clipped.count - 1 { Divider() }
                             }
                         }
                     }
                 }
-            }
-            .padding(20)
-            .frame(maxWidth: 270)
-            .background(
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .fill(Color(.systemBackground))
-            )
-            .shadow(radius: 20)
-            .padding(.horizontal, 24)
-            .scaleEffect(animateIn ? 1.0 : 0.9)              // mimic .transition(.scale)
-            .opacity(animateIn ? 1.0 : 0.0)                  // mimic .transition(.opacity)
-            .onAppear {
-                withAnimation(.easeInOut(duration: 0.2)) {
-                    animateIn = true
-                }
+                .padding(padding)
+//                .fixedSize(horizontal: false, vertical:true)
+                .background(
+                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                        .fill(Color(.systemBackground))
+                )
+                .shadow(radius: 20)
+                .padding(.horizontal, 24)
+                .scaleEffect(animateIn ? 1.0 : 0.9)              // mimic .transition(.scale)
+                .opacity(animateIn ? 1.0 : 0.0)                  // mimic .transition(.opacity)
+                .onAppear {
+                    withAnimation(.easeInOut(duration: 0.2)) { 
+                        animateIn = true
+                    }
+                }.frame(maxHeight: geo.size.height*0.75)
+                .fixedSize(horizontal: false, vertical: true)
             }
         }
         .animation(.easeInOut(duration: 0.2), value: manager.isPresented)
@@ -243,6 +243,7 @@ final class OverlayWindowManager {
 import SwiftUI
 
 struct GlobalPopupDemoView: View {
+   
     var body: some View {
         NavigationView {
             List {
@@ -250,13 +251,12 @@ struct GlobalPopupDemoView: View {
                     Button("Show 1-button popup") {
                         FWPopupManager.shared.showOne(
                             title: "Heads up",
-                            description: "This is a global overlay popup.",
+                            description: "Content goes here. " + String(repeating: "More content ", count: 300)+"-----",
                             PopupButton("OK", role: .cancel) {
                                 print("OK tapped")
                             }
                         )
                     }
-
                     Button("Show 2-button popup (no outside dismiss)") {
                         FWPopupManager.shared.showTwo(
                             title: "Replace file?",
@@ -275,7 +275,7 @@ struct GlobalPopupDemoView: View {
                     Button("Show 3-button popup") {
                         FWPopupManager.shared.showThree(
                             title: "Choose option",
-                            description: "Pick one of the actions below.",
+                            description: "Pick one of the actions below."+String(repeating: "More content ", count: 300),
                             PopupButton("One") { print("One") },
                             PopupButton("Two") { print("Two") },
                             PopupButton("Three") { print("Three") }

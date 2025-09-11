@@ -6,8 +6,6 @@ class UserListViewModel: ObservableObject,FWLoggerDelegate {
     @Published var alertMessage: String?
     @Published var isShowingAlert = false
     let networkService = FWNetworkService(provider: URLSessionNetworkProvider())
-    
-
     func fetchUsers() {
         Global.logThreadType(tag: tag)
         let service=networkService

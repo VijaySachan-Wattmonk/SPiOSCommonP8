@@ -86,7 +86,7 @@ public struct ViewMoreInfo: View {
         
     }
 }
-private struct ViewMoreInfoModifier: ViewModifier {
+private struct ViewMoreInfoModifier: ViewModifier{
     let onClose: () -> Void
     @Binding var showInfo: Bool
     var message: String

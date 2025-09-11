@@ -4,9 +4,7 @@
 //
 //  Created by Vijay Sachan on 28/07/25.
 //
-
 import Foundation
-
 public final class FWNetworkService: BaseNetworkService,FWLoggerDelegate{
     private let provider: NetworkProvider
     public init(provider: NetworkProvider){
@@ -23,7 +21,6 @@ public final class FWNetworkService: BaseNetworkService,FWLoggerDelegate{
         if Global.isExecutingOnMainThread(){
             fatalError(FWNetworkConstants.pleaseCallFromBackground)
         }
-        
         let mergedHeaders = finalHeaders(adding: additionalHeaders)
         guard let requestURL = URL(string: url) else {
             return .failure(NetworkErrorLog(url: url, method: method, headers: mergedHeaders, body: nil, responseData: nil, statusCode: nil, errorDescription: FWNetworkConstants.invalidURL))
