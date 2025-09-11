@@ -131,9 +131,8 @@ struct GlobalPopupOverlayView: View {
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                             .multilineTextAlignment(.leading)
-                        
-                    }
-                    
+                            // let it hug short text
+                    }//.frame(maxHeight: geo.size.height*0.75)// ✅ scroll limit, adjustable
                     // or dynamic based on screen size
                     // Buttons (up to 3) — same layout rules as your original
                     if !manager.buttons.isEmpty {
@@ -197,9 +196,7 @@ struct GlobalPopupOverlayView: View {
                     print("screenWidth: \(screenWidth), screenHeight: \(screenHeight)")
                 }
                 .frame(maxWidth:geo.size.width-safeAreaInsets.left-safeAreaInsets.right-padding*2,maxHeight: geo.size.height-safeAreaInsets.top-safeAreaInsets.bottom-padding*2)
-                .fixedSize(horizontal:false,vertical: true)
-                
-                //                .fixedSize(horizontal: true, vertical: true)
+                .fixedSize(horizontal: false, vertical: true)
             }
         }
         .animation(.easeInOut(duration: 0.2), value: manager.isPresented)
@@ -255,7 +252,7 @@ public struct GlobalPopupDemoView: View {
                     Button("Show 1-button popup") {
                         FWPopupManager.shared.showOne(
                             title: "Heads up",
-                            description: "Content goes here. " + String(repeating: "More content ", count: 300)+"-----",
+                            description: "Content goes here. " + String(repeating: "More content ", count: 1000)+"-----",
                             PopupButton("OK", role: .cancel) {
                                 print("OK tapped")
                             }
@@ -317,7 +314,6 @@ public struct GlobalPopupDemoView: View {
                         }
                     }
                 }
-                
                 Section("Dismiss") {
                     Button("Hide popup") {
                         FWPopupManager.shared.hide()
