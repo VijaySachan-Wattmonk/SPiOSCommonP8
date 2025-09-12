@@ -47,12 +47,11 @@ public struct AppView<Content: View>:View,FWLoggerDelegate{
         }
         .onDisappear{
             viewModel.onDisappear()
-            
         }
-        .onChange(of: scenePhase) { (phase) in
+        .onChange(of: scenePhase) { (_,phase) in
             viewModel.onChange(scenePhase: phase)
         }
-        .onChange(of: colorScheme) { newScheme in
+        .onChange(of: colorScheme) { (_,newScheme) in
             viewModel.onColorSchemeChange(newScheme)
         }
     }
