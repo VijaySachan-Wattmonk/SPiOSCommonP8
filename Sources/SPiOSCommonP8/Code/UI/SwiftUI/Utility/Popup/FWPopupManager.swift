@@ -5,15 +5,12 @@ import SwiftUI
 @MainActor
 public final class FWPopupManager: ObservableObject {
     public static let shared = FWPopupManager()
-
     @Published public var isPresented: Bool = false
     @Published public var title: String = ""
     @Published public var description: String = ""
     @Published public var buttons: [PopupButton] = []
     @Published public var allowOutsideTapToDismiss: Bool = true
-
     private init() {}
-
     // Core presenter
     func show(title: String,
               description: String,
