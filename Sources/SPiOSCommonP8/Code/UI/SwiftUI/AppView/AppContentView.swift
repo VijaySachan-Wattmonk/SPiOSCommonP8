@@ -4,9 +4,7 @@
 //
 //  Created by Vijay Sachan on 30/07/25.
 //
-
 import SwiftUI
-
 public struct AppContentView<Content: View>: View {
     @StateObject private var themeManager: FWThemeManager
     @StateObject private var viewModel: AppContentViewVM

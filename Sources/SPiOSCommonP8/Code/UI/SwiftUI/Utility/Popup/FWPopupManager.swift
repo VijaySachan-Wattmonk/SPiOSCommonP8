@@ -1,9 +1,7 @@
-
 import SwiftUI
 // MARK: - Manager API (unchanged surface, now drives overlay window)
-
 @MainActor
-public final class FWPopupManager: ObservableObject {
+public final class FWPopupManager: ObservableObject{
     public static let shared = FWPopupManager()
     @Published public var isPresented: Bool = false
     @Published public var title: String = ""
