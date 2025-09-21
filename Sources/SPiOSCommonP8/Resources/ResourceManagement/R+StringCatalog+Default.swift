@@ -5,8 +5,8 @@
 //  Created by Wattmonk21 on 21/09/25.
 //
 extension R.StringCatalog.FW{
-        public actor Default{
-            public static let shared = Default()
+    public struct Default:Sendable{
+             public static let shared = Default()
             public let catalog:R.StringCatalog
             private init(){
                 catalog = .init(table: "Localizable", bundle: .module)

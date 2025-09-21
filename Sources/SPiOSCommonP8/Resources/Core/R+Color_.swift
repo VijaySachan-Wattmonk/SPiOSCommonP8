@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 extension R{
-    public final class Color_{
+    public struct Color_:Sendable{
         private  var bundle: Bundle
         public init(bundle: Bundle) {
             self.bundle = bundle
@@ -17,8 +17,8 @@ extension R{
             return UIColor(named: key, in: bundle, compatibleWith: nil)!
             
         }
-        public actor FW { }
-        public actor App { }
+        public struct FW { }
+        public struct App { }
     }
 }
 

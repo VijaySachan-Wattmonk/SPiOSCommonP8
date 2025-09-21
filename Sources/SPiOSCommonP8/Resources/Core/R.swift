@@ -7,7 +7,7 @@
 
 import Foundation
 
-public final class R:Sendable{
+public struct R{
     
 }
 

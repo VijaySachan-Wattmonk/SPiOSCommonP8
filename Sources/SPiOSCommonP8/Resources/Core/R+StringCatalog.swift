@@ -7,7 +7,7 @@
 
 import Foundation
 extension R{
-    public final class StringCatalog{
+    public struct StringCatalog:Sendable{
         public var table: String
         private  var bundle: Bundle
         public init(table: String,bundle: Bundle) {
@@ -17,8 +17,8 @@ extension R{
          public func localizedStr(key:String)->String{
             return String(localized:String.LocalizationValue(key), table: table, bundle:bundle)
         }
-        public actor FW { }
-        public actor App { }
+        public struct FW { }
+        public struct App { }
     }
 }
 
