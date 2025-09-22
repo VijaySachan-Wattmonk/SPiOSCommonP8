@@ -19,7 +19,10 @@ extension R{
              let value=String(localized:String.LocalizationValue(key), table: table, bundle:bundle)
              return value == key ? defaultValue : value
         }
-        
+        public struct FW{
+        }
+        public struct App{
+        }
     }
 }
 

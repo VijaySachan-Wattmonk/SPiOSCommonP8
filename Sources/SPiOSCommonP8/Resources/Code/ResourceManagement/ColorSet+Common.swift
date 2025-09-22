@@ -7,17 +7,15 @@
 
 import UIKit
 
-extension R.Color_ {
+extension R.ColorSet {
 //    public static let shared = Default()
     public struct Common:Sendable{
        public static let shared = Common()
-         let color_:R.Color_
+         let colorSet:R.ColorSet
         private init(){
-            color_=R.Color_(bundle:.module)
+            colorSet=R.ColorSet(bundle:.module)
         }
-        public func color(key:Key) -> UIColor{
-            return color_.uiColor(key: key.rawValue)
-        }
+        
         public enum Key: String {
             case fw_black
         }
