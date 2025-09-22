@@ -7,7 +7,7 @@
 
 import UIKit
 
-extension R.ColorSet {
+extension R.ColorSet.FW {
 //    public static let shared = Default()
     public struct Common:Sendable{
        public static let shared = Common()
@@ -15,7 +15,6 @@ extension R.ColorSet {
         private init(){
             colorSet=R.ColorSet(bundle:.module)
         }
-        
         public enum Key: String {
             case fw_black
         }

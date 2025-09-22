@@ -1,5 +1,5 @@
 //
-//  R.String_+FW.swift
+//  R+FW.swift
 //  SPiOSCommonP8
 //
 //  Created by Wattmonk21 on 22/09/25.
@@ -9,19 +9,19 @@ import UIKit
 
 // MARK: String
 extension R.StringCatalog.FW{
-        public static func common(_ key:R.StringCatalog.Common.Key)->String{
-            return R.StringCatalog.Common.shared.catalog.localizedStr(key: key.rawValue, defaultValue: key.defaultValue)
+    public static func common(_ key:R.StringCatalog.FW.Common.Key)->String{
+        return R.StringCatalog.FW.Common.shared.catalog.localizedStr(key: key.rawValue, defaultValue: key.defaultValue)
         }
 }
 // MARK: Colour
 extension R.ColorSet.FW{
-    public static func common(_ key:R.ColorSet.Common.Key)->UIColor?{
-        return R.ColorSet.Common.shared.colorSet.uiColor(key: key.rawValue)
+    public static func common(_ key:R.ColorSet.FW.Common.Key)->UIColor?{
+        return R.ColorSet.FW.Common.shared.colorSet.uiColor(key: key.rawValue)
     }
 }
 // MARK: Image
 extension R.ImageSet.FW{
-    public static func common(_ key:R.ImageSet.Common.Key)->UIImage?{
-        return R.ImageSet.Common.shared.imageSet.uiImage(key: key.rawValue)
+    public static func common(_ key:R.ImageSet.FW.Common.Key)->UIImage?{
+        return R.ImageSet.FW.Common.shared.imageSet.uiImage(key: key.rawValue)
     }
 }

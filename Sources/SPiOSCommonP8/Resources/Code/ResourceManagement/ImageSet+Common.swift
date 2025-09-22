@@ -7,7 +7,7 @@
 
 import UIKit
 
-extension R.ImageSet {
+extension R.ImageSet.FW {
     public struct Common:Sendable{
        public static let shared = Common()
          let imageSet:R.ImageSet

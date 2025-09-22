@@ -4,7 +4,7 @@
 //
 //  Created by Wattmonk21 on 21/09/25.
 //
-extension R.StringCatalog{
+extension R.StringCatalog.FW{
     public struct Common:Sendable{
         public static let shared = Common()
         let catalog:R.StringCatalog
