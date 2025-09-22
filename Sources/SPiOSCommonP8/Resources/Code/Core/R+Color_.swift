@@ -4,7 +4,6 @@
 //
 //  Created by Wattmonk21 on 21/09/25.
 //
-
 import Foundation
 import UIKit
 extension R{
@@ -17,8 +16,7 @@ extension R{
             return UIColor(named: key, in: bundle, compatibleWith: nil)!
             
         }
-        public struct FW { }
-        public struct App { }
+        
     }
 }
 

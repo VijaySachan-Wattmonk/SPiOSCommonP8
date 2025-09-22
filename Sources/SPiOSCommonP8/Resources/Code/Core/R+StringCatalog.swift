@@ -14,11 +14,11 @@ extension R{
             self.table = table
             self.bundle = bundle
         }
-         public func localizedStr(key:String)->String{
-            return String(localized:String.LocalizationValue(key), table: table, bundle:bundle)
+         public func localizedStr(key:String,defaultValue:String)->String{
+             let value=String(localized:String.LocalizationValue(key), table: table, bundle:bundle)
+             return value == key ? defaultValue : value
         }
-        public struct FW { }
-        public struct App { }
+        
     }
 }
 

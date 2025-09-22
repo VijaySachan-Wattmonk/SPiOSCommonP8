@@ -7,11 +7,11 @@
 
 import UIKit
 
-extension R.Color_.FW {
+extension R.Color_ {
 //    public static let shared = Default()
-    public struct Default:Sendable{
-       public static let shared = Default()
-        private let color_:R.Color_
+    public struct Common:Sendable{
+       public static let shared = Common()
+         let color_:R.Color_
         private init(){
             color_=R.Color_(bundle:.module)
         }
