@@ -18,7 +18,7 @@ extension R.StringCatalog.FW{
                 let defVal=N_A
                 switch self{
                 case .appName: return "MyApp"
-                case .ok: return defVal
+                case .ok: return "Ok"
                     
                 }
             }
