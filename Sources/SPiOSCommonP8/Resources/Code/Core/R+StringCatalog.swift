@@ -6,6 +6,7 @@
 //
 
 import Foundation
+
 extension R{
     public struct StringCatalog:Sendable{
         public var table: String

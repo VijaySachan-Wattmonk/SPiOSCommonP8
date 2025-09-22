@@ -11,10 +11,10 @@ extension R.StringCatalog{
         private init(){
             catalog = .init(table: "Common", bundle: .module)
         }
-        public enum Key: String, CaseIterable {
+        public enum Key: String, CaseIterable{
             case appName
             case ok
-            var defaultValue: String{
+            public var defaultValue: String{
                 let defVal=N_A
                 switch self{
                 case .appName: return "MyApp"
