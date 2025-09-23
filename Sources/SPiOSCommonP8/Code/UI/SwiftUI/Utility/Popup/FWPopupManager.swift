@@ -26,7 +26,6 @@ public final class FWPopupManager: ObservableObject{
             GlobalPopupOverlayView(manager: self)
         }
     }
-
     // Convenience presenters: 1, 2, 3 buttons
     public func showOne(title: String,
                         description: String,
@@ -37,7 +36,6 @@ public final class FWPopupManager: ObservableObject{
              allowOutsideTapToDismiss: allowOutsideTapToDismiss,
              buttons: [first])
     }
-
     public func showTwo(title: String,
                         description: String,
                         allowOutsideTapToDismiss: Bool = false,
@@ -48,7 +46,6 @@ public final class FWPopupManager: ObservableObject{
              allowOutsideTapToDismiss: allowOutsideTapToDismiss,
              buttons: [first, second])
     }
-
     public func showThree(title: String,
                           description: String,
                           allowOutsideTapToDismiss: Bool = false,
@@ -60,10 +57,17 @@ public final class FWPopupManager: ObservableObject{
              allowOutsideTapToDismiss: allowOutsideTapToDismiss,
              buttons: [first, second, third])
     }
-
-    public func hide() {
+    
+    public func hide(){
         self.isPresented = false
         OverlayWindowManager.shared.hide()
+    }
+    
+    public func showText(title:String,description:String) {
+        show(title: title,
+             description: description,
+             allowOutsideTapToDismiss: false,
+             buttons: [])
     }
 
     // Optional: live updates while shown

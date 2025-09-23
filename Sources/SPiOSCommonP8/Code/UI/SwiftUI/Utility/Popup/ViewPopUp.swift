@@ -53,6 +53,8 @@ final class OverlayWindowManager {
             }
         )
         
+        // Added: No special handling here, but showText uses this method
+        
         let host = UIHostingController(rootView: root)
         host.view.backgroundColor = .clear
         
@@ -71,6 +73,21 @@ final class OverlayWindowManager {
             window.alpha = 1
         }
     }
+    
+//    func showText(_ text: String) {
+//        show {
+//            Text(text)
+//                .font(.body)
+//                .padding(20)
+//                .background(
+//                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+//                        .fill(Color(.systemBackground))
+//                        .shadow(radius: 10)
+//                )
+//                .multilineTextAlignment(.center)
+//                .frame(maxWidth: 300)
+//        }
+//    }
     
     func update<Content: View>(@ViewBuilder content: () -> Content) {
         guard isVisible, let host = host else { return }
@@ -316,6 +333,14 @@ public struct GlobalPopupDemoView: View {
                 Section("Dismiss") {
                     Button("Hide popup") {
                         FWPopupManager.shared.hide()
+                    }
+                }
+                Section("Text-only popup") {
+                    Button("Show text-only popup") {
+//                        FWPopupManager.shared.showText("Hello world!")
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                            FWPopupManager.shared.hide()
+                        }
                     }
                 }
             }
