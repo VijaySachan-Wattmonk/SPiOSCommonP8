@@ -293,7 +293,6 @@ public struct GlobalPopupDemoView: View {
                                 FWPopupManager.shared.hide()
                             }
                         )
-                        
                         // Simulate async work and update the same popup
                         Task { @MainActor in
                             try? await Task.sleep(nanoseconds: 1_000_000_000) // 1s
