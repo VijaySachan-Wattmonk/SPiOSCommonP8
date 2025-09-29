@@ -5,7 +5,7 @@
 //  Created by Wattmonk21 on 20/08/25.
 //
 
-import SwiftUICore
+import SwiftUI
 
 extension View {
     @ViewBuilder public func ext_If<Content: View>(_ condition: Bool, transform: (Self) -> Content) -> some View {
