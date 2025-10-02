@@ -17,6 +17,7 @@ public struct DemoFWNavigationManager: View {
                     } label: {
                         Text("Move to screen 1")
                     }
+                    
                 }.navigationDestination(for: Routes1.self){ val in
                     
                     if val == .screen1{
