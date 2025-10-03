@@ -8,15 +8,35 @@ public struct DemoFWNavigationManager: View {
     @StateObject private var nav = FWNavigationManager()
     public init(){}
     public var body: some View {
-        VStack{
+        VStack(spacing: 15){
             Text("Current path count=\(nav.path.count)")
             NavigationStack(path: $nav.path) {
-                VStack{
-                    Button {
-                        nav.push(id: 1, Routes1.screen1)
-                    } label: {
-                        Text("Move to screen 1")
+                VStack(spacing: 15){
+                    Section("1. Navigation Path : Update programmatically"){
+                        Button {
+                            nav.push(id: 1, Routes1.screen1)
+                        } label: {
+                            Text("Move to screen 1")
+                        }
                     }
+                    Divider()
+                    Section("2. Navigation Path: will not update automatically"){
+                        List(["A","B"],id:\.self){ val in
+                            NavigationLink("\(val)"){
+                                Text("\(val)")
+                            }
+                        }
+                    }.foregroundStyle(Color.red)
+                    Divider()
+                    Section("3. Navigation Path: will update automatically"){
+                        List(["1","2"], id: \.self) { val in
+                            NavigationLink(value: val) {
+                                Text(val)
+                            }
+                        }
+                        
+                    }
+                    Spacer()
                     
                 }.navigationDestination(for: Routes1.self){ val in
                     
@@ -26,6 +46,8 @@ public struct DemoFWNavigationManager: View {
                     else {
                         Text("else DemoFWNavigationManager")
                     }
+                }.navigationDestination(for: String.self) { val in
+                    Text(val)
                 }
                 
             }
