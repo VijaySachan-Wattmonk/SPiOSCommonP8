@@ -7,6 +7,8 @@
 import Foundation
 @MainActor
 public final class DoubleClickHandler {
+    public static let shared=DoubleClickHandler()
+    private init(){}
     /// Maximum time interval between two clicks to be considered a double click.
     let minDelay: TimeInterval=0.75
     private var isExecuting=false
