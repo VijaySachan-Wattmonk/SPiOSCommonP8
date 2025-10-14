@@ -1,7 +1,6 @@
 import SwiftUI
-
 // MARK: - Root Demo using FWNavigationManager
-public struct DemoFWNavigationManager: View {
+public struct DemoFWNavigationManager: View{
     private enum Routes1: Hashable, Codable{
     case screen1
     }
