@@ -3,6 +3,16 @@ import SwiftUI
 public struct DemoFWNavigationManager: View{
     private enum Routes1: Hashable, Codable{
     case screen1
+        case xyz(String)
+        var caseName: String {
+            
+            // Fallback: strip any associated value description
+            let full = String(describing: self)
+            if let parenIndex = full.firstIndex(of: "(") {
+                return String(full[..<parenIndex])
+            }
+            return full
+        }
     }
     @StateObject private var nav = FWNavigationManager()
     public init(){}
@@ -21,8 +31,8 @@ public struct DemoFWNavigationManager: View{
                     Divider()
                     Section("2. Navigation Path: will not update automatically"){
                         List(["A","B"],id:\.self){ val in
-                            NavigationLink("\(val)"){
-                                Text("\(val)")
+                            NavigationLink("Source \(val)"){
+                                Text("Destination \(val)")
                             }
                         }
                     }.foregroundStyle(Color.red)
@@ -38,7 +48,6 @@ public struct DemoFWNavigationManager: View{
                     Spacer()
                     
                 }.navigationDestination(for: Routes1.self){ val in
-                    
                     if val == .screen1{
                         Screen1()
                     }
