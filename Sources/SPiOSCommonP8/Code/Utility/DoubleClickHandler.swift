@@ -2,7 +2,7 @@
 //  DoubleClickHandler.swift
 //  SPiOSCommonP8
 //
-//  Created by Wattmonk21 on 14/10/25.
+//  Created by Vijay Sachan on 14/10/25.
 //
 import Foundation
 @MainActor

@@ -2,7 +2,7 @@
 //  ECollection.swift
 //  SPiOSCommonP8
 //
-//  Created by Wattmonk21 on 28/08/25.
+//  Created by Vijay Sachan on 28/08/25.
 //
 
 /// Extension to add safe element retrieval to all collections.

@@ -2,7 +2,7 @@
 //  ViewMoreInfo.swift
 //  SPiOSCommonP8
 //
-//  Created by Wattmonk21 on 02/09/25.
+//  Created by Vijay Sachan on 02/09/25.
 //
 import SwiftUI
 public struct ViewInfoIconButton: View{
